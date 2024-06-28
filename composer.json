@@ -1,0 +1,27 @@
+{
+    "name": "celiovmjr/simplequery",
+    "description": "Streamlined SQL Queries Made Simple",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Célio Junior",
+            "email": "profissional.celiojunior@outlook.com",
+            "homepage": "https://fb.com/celiojr1994",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Builder\\Application\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.4"
+    }
+}
