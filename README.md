@@ -32,7 +32,7 @@ The `SimpleQuery` class provides a fluent interface for constructing SQL queries
 To use the `SimpleQuery` class, ensure you have PHP 8.1+ and PDO extension installed. Simply include or autoload the class file in your project:
 
 ```composer
-composer require celiovmjr/SimpleQuery;
+composer require celiovmjr/simplequery;
 ```
 
 ## Usage
