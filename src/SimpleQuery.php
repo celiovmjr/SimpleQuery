@@ -93,6 +93,21 @@ abstract class SimpleQuery extends FactoryBuilder
         return $this;
     }
 
+    public function beginTransaction(): void
+    {
+        $this->connection->beginTransaction();
+    }
+
+    public function commit(): void
+    {
+        $this->connection->commit();
+    }
+
+    public function rollBack(): void
+    {
+        $this->connection->rollBack();
+    }
+
     public function getStatement(): string
     {
         return $this->queryBuilder->buildQuery();
