@@ -7,7 +7,7 @@ use PDOException;
 
 trait CRUD
 {
-    public function fetch(bool $all = false, bool $associative = false): array|static|null
+    protected function fetch(bool $all = false, bool $associative = false): array|static|null
     {
         try {
             $stmt = $this->prepare();
@@ -35,7 +35,7 @@ trait CRUD
         }
     }
 
-    public function save(): bool
+    protected function save(): bool
     {
         if (empty($this->{$this->primaryKey})) {
             return $this->create();
@@ -44,7 +44,7 @@ trait CRUD
         return $this->update();
     }
 
-    public function delete(int|string $id): bool
+    protected function delete(int|string $id): bool
     {
         try {
             $stmt = $this->prepare("DELETE FROM {$this->table()} WHERE $this->primaryKey=:id", [

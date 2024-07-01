@@ -2,14 +2,15 @@
 
 namespace Builder\Application;
 
-use Builder\Application\Traits\CRUD;
-use Builder\Application\Traits\Statements;
+use Builder\Application\Traits\Transaction;
+use Builder\Application\Traits\Statement;
 use Builder\Application\Traits\Utils;
+use Builder\Application\Traits\CRUD;
 use PDO;
 
 abstract class SimpleQuery extends FactoryBuilder
 {
-    use CRUD, Statements, Utils;
+    use Transaction, Statement, Utils, CRUD;
 
     protected string $table;
     protected string $primaryKey = 'id';
@@ -24,20 +25,20 @@ abstract class SimpleQuery extends FactoryBuilder
         $this->queryBuilder->setDriver($this->driver());
     }
 
-    public function select(array $fields = ['*'], bool $distinct = false): self
+    protected function select(array $fields = ['*'], bool $distinct = false): self
     {
         $this->queryBuilder->setStatement('fields', $fields);
         $this->queryBuilder->setStatement('distinct', $distinct);
         return $this;
     }
 
-    public function from(string $table): self
+    protected function from(string $table): self
     {
         $this->queryBuilder->setTable($table);
         return $this;
     }
 
-    public function where(string $condition, array $parameters = []): self
+    protected function where(string $condition, array $parameters = []): self
     {
         if (empty($this->queryBuilder->getStatement('where'))) {
             $this->queryBuilder->setStatement('where', $condition);
@@ -51,64 +52,49 @@ abstract class SimpleQuery extends FactoryBuilder
         return $this;
     }
 
-    public function inner(string $table, string $conditions): self
+    protected function inner(string $table, string $conditions): self
     {
         $this->queryBuilder->setJoin('INNER', $table, $conditions);
         return $this;
     }
 
-    public function left(string $table, string $conditions): self
+    protected function left(string $table, string $conditions): self
     {
         $this->queryBuilder->setJoin('LEFT', $table, $conditions);
         return $this;
     }
 
-    public function right(string $table, string $conditions): self
+    protected function right(string $table, string $conditions): self
     {
         $this->queryBuilder->setJoin('RIGHT', $table, $conditions);
         return $this;
     }
 
-    public function asc(string $column): self
+    protected function asc(string $column): self
     {
         $this->queryBuilder->setOrder($column, 'ASC');
         return $this;
     }
 
-    public function desc(string $column): self
+    protected function desc(string $column): self
     {
         $this->queryBuilder->setOrder($column, 'DESC');
         return $this;
     }
 
-    public function limit(int $limit): self
+    protected function limit(int $limit): self
     {
         $this->queryBuilder->setLimit($limit);
         return $this;
     }
 
-    public function offset(int $offset): self
+    protected function offset(int $offset): self
     {
         $this->queryBuilder->setOffset($offset);
         return $this;
     }
 
-    public function beginTransaction(): void
-    {
-        $this->connection->beginTransaction();
-    }
-
-    public function commit(): void
-    {
-        $this->connection->commit();
-    }
-
-    public function rollBack(): void
-    {
-        $this->connection->rollBack();
-    }
-
-    public function getStatement(): string
+    protected function getStatement(): string
     {
         return $this->queryBuilder->buildQuery();
     }

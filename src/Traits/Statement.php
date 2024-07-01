@@ -6,7 +6,7 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
-trait Statements
+trait Statement
 {
     private function bind(PDOStatement $stmt, array $parameters = []): void
     {

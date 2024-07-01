@@ -26,24 +26,24 @@ abstract  class FactoryBuilder
         unset($this->data[$name]);
     }
 
-    public function fromArray(array $data): static
+    protected function fromArray(array $data): static
     {
         $this->data = $data;
         return $this;
     }
 
-    public function fromObject(object $data): static
+    protected function fromObject(object $data): static
     {
         $this->fromArray(get_object_vars($data));
         return $this;
     }
 
-    public function toArray(): array
+    protected function toArray(): array
     {
         return $this->data;
     }
 
-    public function toObject(): object
+    protected function toObject(): object
     {
         return (object) $this->data;
     }
