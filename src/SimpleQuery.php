@@ -27,6 +27,7 @@ abstract class SimpleQuery extends FactoryBuilder
 
     protected function select(array $fields = ['*'], bool $distinct = false): self
     {
+        $this->queryBuilder->reset();
         $this->queryBuilder->setStatement('fields', $fields);
         $this->queryBuilder->setStatement('distinct', $distinct);
         return $this;

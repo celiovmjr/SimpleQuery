@@ -95,6 +95,12 @@ class QueryBuilder
         return implode(' ', array_filter($parts));
     }
 
+    public function reset(): void
+    {
+        $this->statements = [];
+        $this->parameters = [];
+    }
+
     private function buildSelect(): string
     {
         return (
