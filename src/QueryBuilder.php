@@ -146,11 +146,19 @@ class QueryBuilder
 
     private function buildDefaultLimitOffset(): string
     {
+        if (empty($this->getStatement('offset'))) {
+            return "LIMIT {$this->getStatement('limit')}";
+        }
+
         return "LIMIT {$this->getStatement('limit')} OFFSET {$this->getStatement('offset')}";
     }
 
     private function buildSqlSrvLimitOffset(): string
     {
+        if (empty($this->getStatement('offset'))) {
+            $this->setStatement('offset', 0);
+        }
+
         $query = "OFFSET {$this->getStatement('offset')} ROWS FETCH NEXT {$this->getStatement('limit')} ROWS ONLY";
         if (empty($this->getStatement('order'))) {
             $query = "ORDER BY 1" . $query;
