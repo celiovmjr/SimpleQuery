@@ -21,7 +21,7 @@ trait Statement
         }
     }
 
-    private function prepare(?string $statement = null, ?array $parameters = []): PDOStatement
+    protected function prepare(?string $statement = null, ?array $parameters = []): PDOStatement
     {
         if (!$stmt = $this->connection->prepare($statement ?? $this->getStatement())) {
             throw new PDOException("Error preparing SQL statement. Please verify the syntax and parameters.", 500);
