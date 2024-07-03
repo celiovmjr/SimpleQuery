@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Application;
 
-abstract  class FactoryBuilder
+abstract class FactoryBuilder
 {
     protected array $data = [];
 

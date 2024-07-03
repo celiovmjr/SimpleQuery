@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Application\Traits;
 
 use PDO;
@@ -62,12 +64,12 @@ trait CRUD
             if (! $this->required()) {
                 return false;
             }
-            
-            
+
+
             $columns = implode(', ', array_keys($this->safe()));
-            $placeholders = implode(', ', array_map(fn($col) => ":$col", array_keys($this->safe())));
+            $placeholders = implode(', ', array_map(fn ($col) => ":$col", array_keys($this->safe())));
             $query = "INSERT INTO {$this->table()} ($columns) VALUES ($placeholders)";
-            
+
             $this->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
 
@@ -92,9 +94,9 @@ trait CRUD
             }
 
             $primaryKeyValue = $this->{$this->primaryKey};
-            $setClause = implode(', ', array_map(fn($col) => "$col=:$col", array_keys($this->safe())));
+            $setClause = implode(', ', array_map(fn ($col) => "$col=:$col", array_keys($this->safe())));
             $query = "UPDATE $this->table SET $setClause WHERE $this->primaryKey = :$this->primaryKey";
-            
+
             $this->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
             $stmt->bindParam(":$this->primaryKey", $primaryKeyValue);

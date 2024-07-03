@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Builder\Application;
 
@@ -10,7 +12,10 @@ use PDO;
 
 abstract class SimpleQuery extends FactoryBuilder
 {
-    use Transaction, Statement, Utils, CRUD;
+    use Transaction;
+    use Statement;
+    use Utils;
+    use CRUD;
 
     protected string $table;
     protected string $primaryKey = 'id';

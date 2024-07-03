@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Application\Traits;
 
 use InvalidArgumentException;
@@ -43,7 +45,7 @@ trait Utils
     private function required(): bool
     {
         foreach ($this->required as $column) {
-            if (empty($this->$column)) {
+            if (empty($this->$column) && !is_numeric($this->$column) && $this->$column !== '') {
                 throw new InvalidArgumentException("Missing required column: $column");
             }
         }
@@ -60,7 +62,7 @@ trait Utils
             }
         }
 
-        return (array) $this->data ?? [];
+        return $this->toArray() ?? [];
     }
 
     private function table(): string
