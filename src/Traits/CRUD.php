@@ -70,18 +70,18 @@ trait CRUD
             $placeholders = implode(', ', array_map(fn ($col) => ":$col", array_keys($this->safe())));
             $query = "INSERT INTO {$this->table()} ($columns) VALUES ($placeholders)";
 
-            $this->beginTransaction();
+            $this->connection->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
 
             if (! $stmt->execute()) {
-                $this->rollBack();
+                $this->connection->rollBack();
                 return false;
             }
 
-            $this->commit();
+            $this->connection->commit();
             return true;
         } catch (PDOException) {
-            $this->rollBack();
+            $this->connection->rollBack();
             throw new PDOException("Failed to create record.", 500);
         }
     }
@@ -97,19 +97,19 @@ trait CRUD
             $setClause = implode(', ', array_map(fn ($col) => "$col=:$col", array_keys($this->safe())));
             $query = "UPDATE $this->table SET $setClause WHERE $this->primaryKey = :$this->primaryKey";
 
-            $this->beginTransaction();
+            $this->connection->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
             $stmt->bindParam(":$this->primaryKey", $primaryKeyValue);
 
             if (! $stmt->execute()) {
-                $this->rollBack();
+                $this->connection->rollBack();
                 return false;
             }
 
-            $this->commit();
+            $this->connection->commit();
             return true;
         } catch (PDOException) {
-            $this->rollBack();
+            $this->connection->rollBack();
             throw new PDOException("Failed to update record.", 500);
         }
     }
