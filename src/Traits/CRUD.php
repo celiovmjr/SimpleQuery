@@ -88,7 +88,7 @@ trait CRUD
     private function update(): bool
     {
         try {
-			if ($this->timeStamps) {
+			if ($this->timeStamp) {
                 $this->updated_at = (new DateTime("now"))->format("Y-m-d H:i:s");
             }
 
