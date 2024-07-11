@@ -19,6 +19,7 @@ abstract class SimpleQuery extends FactoryBuilder
 
     protected string $table;
     protected string $primaryKey = 'id';
+    protected bool $timeStamp = true;
     protected array $required = [];
     protected array $safe = [];
     private readonly QueryBuilder $queryBuilder;
