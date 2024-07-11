@@ -6,6 +6,7 @@ namespace Builder\Application\Traits;
 
 use PDO;
 use PDOException;
+use DateTime;
 
 trait CRUD
 {
@@ -49,9 +50,7 @@ trait CRUD
     protected function delete(int|string $id): bool
     {
         try {
-            $stmt = $this->prepare("DELETE FROM {$this->table()} WHERE $this->primaryKey=:id", [
-                'id' => $id
-            ]);
+            $stmt = $this->prepare("DELETE FROM {$this->table()} WHERE $this->primaryKey=:id", ['id' => $id]);
             return $stmt->execute();
         } catch (PDOException) {
             throw new PDOException("Failed to delete data from the database.", 500);
@@ -89,13 +88,17 @@ trait CRUD
     private function update(): bool
     {
         try {
+			if ($this->timeStamps) {
+                $this->updated_at = (new DateTime("now"))->format("Y-m-d H:i:s");
+            }
+
             if (!$this->required()) {
                 return false;
             }
 
             $primaryKeyValue = $this->{$this->primaryKey};
             $setClause = implode(', ', array_map(fn ($col) => "$col=:$col", array_keys($this->safe())));
-            $query = "UPDATE $this->table SET $setClause WHERE $this->primaryKey = :$this->primaryKey";
+			$query = "UPDATE {$this->table()} SET $setClause WHERE $this->primaryKey=:$this->primaryKey";
 
             $this->connection->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
