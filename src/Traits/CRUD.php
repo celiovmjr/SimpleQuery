@@ -88,7 +88,7 @@ trait CRUD
     private function update(): bool
     {
         try {
-			if ($this->timeStamp) {
+            if ($this->timeStamp) {
                 $this->updated_at = (new DateTime("now"))->format("Y-m-d H:i:s");
             }
 
@@ -98,7 +98,7 @@ trait CRUD
 
             $primaryKeyValue = $this->{$this->primaryKey};
             $setClause = implode(', ', array_map(fn ($col) => "$col=:$col", array_keys($this->safe())));
-			$query = "UPDATE {$this->table()} SET $setClause WHERE $this->primaryKey=:$this->primaryKey";
+            $query = "UPDATE {$this->table()} SET $setClause WHERE $this->primaryKey=:$this->primaryKey";
 
             $this->connection->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
