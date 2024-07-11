@@ -57,9 +57,7 @@ trait Utils
     {
         $unsetData = array_merge($this->safe, [$this->primaryKey]);
         foreach ($unsetData as $column) {
-            if (! empty($this->$column)) {
-                unset($this->$column);
-            }
+            unset($this->$column);
         }
 
         return $this->toArray() ?? [];
