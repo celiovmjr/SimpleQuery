@@ -44,8 +44,8 @@ trait CRUD
             $stmt = $this->prepare();
             $stmt->execute();
 
-            return (int) $stmt->columnCount() > 0
-                ? $stmt->fetchColumn()
+            return ($stmt->columnCount() > 0)
+                ? (int) $stmt->fetchColumn()
                 : $stmt->rowCount();
         } catch (PDOException) {
             return 0;
