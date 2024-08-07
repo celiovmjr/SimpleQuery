@@ -8,19 +8,13 @@ use InvalidArgumentException;
 
 class QueryBuilder
 {
-    private string $table;
-    private readonly string $driver;
     private array $statements = [];
     private array $parameters = [];
 
-    public function setTable(string $table): void
-    {
-        $this->table = $table;
-    }
-
-    public function setDriver(string $driver): void
-    {
-        $this->driver = $driver;
+    public function __construct(
+        private string $table,
+        private readonly string $driver
+    ) {
     }
 
     public function getStatement(string $statement): mixed
@@ -37,7 +31,7 @@ class QueryBuilder
     {
         $data = [];
         foreach ($parameters as $key => $value) {
-            $data[str_contains($key, ':') ? $key : ':' . $key] = $value;
+            $data[str_contains($key, ':') ? $key : ":{$key}"] = $value;
         }
 
         $this->parameters = array_merge($this->parameters, $data);
@@ -76,7 +70,7 @@ class QueryBuilder
         $validDirections = ['ASC', 'DESC'];
         $direction = strtoupper($direction);
 
-        if (!in_array($direction, $validDirections)) {
+        if (!in_array($direction, $validDirections, true)) {
             throw new InvalidArgumentException("Invalid direction '$direction' provided. Valid directions are: " . implode(', ', $validDirections));
         }
 
@@ -106,31 +100,24 @@ class QueryBuilder
     private function buildSelect(): string
     {
         return (
-            $this->getStatement('distinct') ? 'SELECT DISTINCT ' : 'SELECT '
-        ) . implode(', ', $this->getStatement('fields')) . ' FROM ' . $this->table;
+            $this->getStatement('distinct') ? "SELECT DISTINCT " : "SELECT "
+        ) . implode(', ', $this->getStatement('fields') ?? []) . " FROM $this->table";
     }
 
     private function buildJoins(): string
     {
-        if (! $this->getStatement('join')) {
-            return "";
-        }
-        return implode(' ', $this->getStatement('join'));
+        return $this->getStatement('join') ? implode(' ', $this->getStatement('join')) : '';
     }
 
     private function buildWhere(): string
     {
-        return !empty($this->getStatement('where')) ? "WHERE {$this->getStatement('where')}" : '';
+        return $this->getStatement('where') ? "WHERE {$this->getStatement('where')}" : '';
     }
 
     private function buildOrderBy(): string
     {
         $order = $this->getStatement('order');
-        if (empty($order)) {
-            return '';
-        }
-
-        return "ORDER BY {$order['column']} {$order['direction']}";
+        return $order ? "ORDER BY {$order['column']} {$order['direction']}" : '';
     }
 
     private function buildLimitOffset(): string
@@ -139,33 +126,28 @@ class QueryBuilder
             return '';
         }
 
-        if ($this->driver === 'sqlsrv') {
-            return $this->buildSqlSrvLimitOffset();
-        }
-
-        return $this->buildDefaultLimitOffset();
+        return $this->driver === 'sqlsrv'
+            ? $this->buildSqlSrvLimitOffset()
+            : $this->buildDefaultLimitOffset();
     }
 
     private function buildDefaultLimitOffset(): string
     {
-        if (empty($this->getStatement('offset'))) {
-            return "LIMIT {$this->getStatement('limit')}";
-        }
-
-        return "LIMIT {$this->getStatement('limit')} OFFSET {$this->getStatement('offset')}";
+        $limit = $this->getStatement('limit');
+        $offset = $this->getStatement('offset');
+        return $offset !== null
+            ? "LIMIT {$limit} OFFSET {$offset}"
+            : "LIMIT {$limit}";
     }
 
     private function buildSqlSrvLimitOffset(): string
     {
-        if (empty($this->getStatement('offset'))) {
-            $this->setStatement('offset', 0);
-        }
+        $offset = $this->getStatement('offset') ?? 0;
+        $limit = $this->getStatement('limit') ?? 'ALL';
 
-        $query = "OFFSET {$this->getStatement('offset')} ROWS FETCH NEXT {$this->getStatement('limit')} ROWS ONLY";
-        if (empty($this->getStatement('order'))) {
-            $query = "ORDER BY 1" . $query;
-        }
-
-        return $query;
+        $query = "OFFSET {$offset} ROWS FETCH NEXT {$limit} ROWS ONLY";
+        return empty($this->getStatement('order'))
+            ? "ORDER BY 1 $query"
+            : $query;
     }
 }
