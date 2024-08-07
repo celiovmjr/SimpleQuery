@@ -17,6 +17,11 @@ class QueryBuilder
     ) {
     }
 
+    public function setTable(string $table): void
+    {
+        $this->table = $table;
+    }
+
     public function getStatement(string $statement): mixed
     {
         return !empty($this->statements[$statement]) ? $this->statements[$statement] : null;
