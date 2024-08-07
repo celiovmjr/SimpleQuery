@@ -16,7 +16,7 @@ trait CRUD
             $stmt = $this->prepare();
             $stmt->execute();
 
-            if (! $stmt->rowCount()) {
+            if (!$stmt->rowCount()) {
                 return null;
             }
 
@@ -35,6 +35,18 @@ trait CRUD
             return $stmt->fetchObject(static::class);
         } catch (PDOException) {
             throw new PDOException("Failed to retrieve data from the database.", 500);
+        }
+    }
+
+    protected function count(): int
+    {
+        try {
+            $stmt = $this->prepare();
+            $stmt->execute();
+
+            return $stmt->rowCount();
+        } catch (PDOException) {
+            return 0;
         }
     }
 
@@ -60,7 +72,7 @@ trait CRUD
     private function create(): bool
     {
         try {
-            if (! $this->required()) {
+            if (!$this->required()) {
                 return false;
             }
 
@@ -72,7 +84,7 @@ trait CRUD
             $this->connection->beginTransaction();
             $stmt = $this->prepare($query, $this->safe());
 
-            if (! $stmt->execute()) {
+            if (!$stmt->execute()) {
                 $this->connection->rollBack();
                 return false;
             }
@@ -104,7 +116,7 @@ trait CRUD
             $stmt = $this->prepare($query, $this->safe());
             $stmt->bindParam(":$this->primaryKey", $primaryKeyValue);
 
-            if (! $stmt->execute()) {
+            if (!$stmt->execute()) {
                 $this->connection->rollBack();
                 return false;
             }
