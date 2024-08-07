@@ -26,9 +26,7 @@ abstract class SimpleQuery extends FactoryBuilder
 
     public function __construct(private readonly PDO $connection)
     {
-        $this->queryBuilder = new QueryBuilder();
-        $this->queryBuilder->setTable($this->table());
-        $this->queryBuilder->setDriver($this->driver());
+        $this->queryBuilder = new QueryBuilder($this->table(), $this->driver());
     }
 
     protected function select(array $fields = ['*'], bool $distinct = false): self
